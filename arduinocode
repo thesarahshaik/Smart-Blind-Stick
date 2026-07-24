@@ -1,0 +1,91 @@
+// Smart Blind Stick - Final Demo Version
+
+const int trigPin = 9;
+const int echoPin = 10;
+const int buzzer = 8;
+
+long duration;
+int distance;
+
+void setup() {
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  // Trigger ultrasonic sensor
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(trigPin, LOW);
+
+  // Read echo
+  duration = pulseIn(echoPin, HIGH);
+
+  // Calculate distance
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Ignore far objects
+  if(distance > 90 || distance <= 0){
+
+      noTone(buzzer);
+  }
+
+  // Far object (60–90 cm)
+  else if(distance > 60){
+
+      tone(buzzer,2000);
+      delay(100);
+
+      noTone(buzzer);
+      delay(700);
+  }
+
+  // Medium object (35–60 cm)
+  else if(distance > 35){
+
+      tone(buzzer,2500);
+      delay(80);
+
+      tone(buzzer,3000);
+      delay(80);
+
+      noTone(buzzer);
+      delay(300);
+  }
+
+  // Close object (15–35 cm)
+  else if(distance > 15){
+
+      tone(buzzer,3200);
+      delay(50);
+
+      tone(buzzer,3800);
+      delay(50);
+
+      noTone(buzzer);
+      delay(100);
+  }
+
+  // Very close danger (<15 cm)
+  else{
+
+      tone(buzzer,4000);
+      delay(20);
+
+      tone(buzzer,3500);
+      delay(20);
+  }
+
+}
